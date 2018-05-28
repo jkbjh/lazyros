@@ -14,7 +14,7 @@ import rospy
 import rospy.rostime
 import rospy.exceptions
 import rostopic
-import lazyros_numbers
+import lazyros.numbers
 
 class _NOP(object):
     """This is like a mock-object with all the methods that you can possible imagine."""
@@ -75,7 +75,7 @@ class TFSubscriber(BufferingSubscriber):
         if all((self._transformer.can_transform(target, source, time) for target, source in self._transforms)):
             self.transformed = tuple((
                 ((source, target),
-                 lazyros_numbers.transform_to_array(
+                 lazyros.numbers.transform_to_array(
                      self._transformer.lookup_transform(target, source, time).transform))
                 for target, source in self._transforms
             ))
