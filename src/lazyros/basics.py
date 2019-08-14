@@ -83,7 +83,7 @@ class TFSubscriber(BufferingSubscriber):
                      self._transformer.lookup_transform(target, source, time).transform))
                 for target, source in self._transforms
             ))
-            self.time_buffer.append(time, transformed)
+            self.time_buffer.append(time, dict(transformed))
             self.transformed = transformed
             self.event.set()
 

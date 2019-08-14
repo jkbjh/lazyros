@@ -21,3 +21,10 @@ def test_time_buffer():
     tb.append(4.0, "HALLO")
     assert tb.get_closest(1.0) == "XYZ"
     assert len(tb) == 3
+
+def test_dict_in_time_buffer():
+    tb = lazyros.time_buffer.TimeBuffer(capacity=3)
+    tb.append(1.0, {1:"Hallo"})
+    tb.append(2.0, {2:"ABC"})
+    assert tb.get_closest(1.4) == {1: "Hallo"}
+    assert tb.get_closest(1.55) == {2: "ABC"}

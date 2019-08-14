@@ -83,7 +83,7 @@ class ServiceProxy(object):
             return self.srv_proxy(*a, **kw)
 
     def code(self):
-        return "lazyros_services.ServiceProxy(%r, %s)" % (self._name, self.__get_class_name(self.srv_class))
+        return "lazyros.services.ServiceProxy(%r, %s)" % (self._name, self.__get_class_name(self.srv_class))
 
     @staticmethod
     def __get_class_name(ros_service_class):
