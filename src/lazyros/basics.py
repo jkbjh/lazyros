@@ -1,4 +1,5 @@
 from __future__ import print_function
+from __future__ import absolute_import
 
 import threading
 import atexit
@@ -15,6 +16,8 @@ import rospy.rostime
 import rospy.exceptions
 import rostopic
 import lazyros.numbers
+
+from .time_buffer import TimeBuffer
 
 class _NOP(object):
     """This is like a mock-object with all the methods that you can possible imagine."""
@@ -60,7 +63,7 @@ class BufferingSubscriber(object):
 
 
 class TFSubscriber(BufferingSubscriber):
-    def __init__(self, transforms):
+    def __init__(self, transforms, time_buffer_capacity=100):
         super(TFSubscriber, self).__init__("/tf", tf2_msgs.msg.TFMessage)
         timeout = rospy.Duration(1.0)  # I just choose this value without any reason
         self._transformer = tf2_ros.Buffer()
@@ -69,16 +72,19 @@ class TFSubscriber(BufferingSubscriber):
         self._latest_received_time = rospy.get_rostime()
         self._time_on_callback = rospy.get_rostime()
         self.transformed = ()
+        self.time_buffer = TimeBuffer(time_buffer_capacity)
 
     def update_transform(self):
         time = rospy.Time(0)
         if all((self._transformer.can_transform(target, source, time) for target, source in self._transforms)):
-            self.transformed = tuple((
+            transformed = tuple((
                 ((source, target),
                  lazyros.numbers.transform_to_array(
                      self._transformer.lookup_transform(target, source, time).transform))
                 for target, source in self._transforms
             ))
+            self.time_buffer.append(time, transformed)
+            self.transformed = transformed
             self.event.set()
 
     def _callback(self, data):
