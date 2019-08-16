@@ -3,12 +3,19 @@ import bisect
 
 
 class TimeBuffer(object):
-    def __init__(self, capacity=100):
+    def __init__(self, capacity=100, time_type=None):
         self._buffer = []
         self._capacity = capacity
+        self._type = time_type
 
     def append(self, time, message):
-        print(self._buffer)
+        if self._type is None:
+            self._type = type(time)
+        else:
+            if type(time) != self._type:
+                raise RuntimeError(("FATAL: tried to append >%r< which is of type %s to time buffer, "
+                                    "while the time buffer "
+                                    "uses type %s! convert %s to type %s before appending!") % (time, type(time), self._type, time, self._type))
         bisect.insort_right(self._buffer, (time, message))
         if len(self._buffer) > self._capacity:
             self._buffer = self._buffer[-self._capacity:]

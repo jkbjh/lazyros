@@ -28,3 +28,10 @@ def test_dict_in_time_buffer():
     tb.append(2.0, {2:"ABC"})
     assert tb.get_closest(1.4) == {1: "Hallo"}
     assert tb.get_closest(1.55) == {2: "ABC"}
+
+
+def test_static_type():
+    tb = lazyros.time_buffer.TimeBuffer(capacity=3)
+    tb.append(1.0, "test")
+    with pytest.raises(RuntimeError):
+        tb.append(1, "dada")
