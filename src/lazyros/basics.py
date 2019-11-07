@@ -61,7 +61,6 @@ class BufferingSubscriber(object):
 
 class TFSubscriber(BufferingSubscriber):
     def __init__(self, transforms):
-        super(TFSubscriber, self).__init__("/tf", tf2_msgs.msg.TFMessage)
         timeout = rospy.Duration(1.0)  # I just choose this value without any reason
         self._transformer = tf2_ros.Buffer()
         self._listener = tf2_ros.TransformListener(self._transformer)
@@ -69,6 +68,7 @@ class TFSubscriber(BufferingSubscriber):
         self._latest_received_time = rospy.get_rostime()
         self._time_on_callback = rospy.get_rostime()
         self.transformed = ()
+        super(TFSubscriber, self).__init__("/tf", tf2_msgs.msg.TFMessage)
 
     def update_transform(self):
         time = rospy.Time(0)
