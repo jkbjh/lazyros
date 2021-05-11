@@ -81,6 +81,14 @@ class TFSubscriber(BufferingSubscriber):
             ))
             self.event.set()
 
+    def info_on_missing_transforms(self):
+        time = rospy.Time(0)
+        results = []
+        for target, source in self._transforms:
+            if not self._transformer.can_transform(target, source, time):
+                results.append(" TF: %s -> %s (%s) cannot transform!" % (source, target, time))
+        return "\n".join(results)
+
     def _callback(self, data):
         # in TF static transformations are future dated to
         # hack around not having static transformations.  but
